@@ -4,11 +4,14 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Logger(models.Model):
-      created_by    = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-      modified_by   = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-      created_at    = models.DateTimeField(null=False, auto_now_add =True)
-      modified_at   = models.DateTimeField(null=False, auto_now     =True)
+    created_by    = models.ForeignKey(User, to_field="id" , on_delete=models.CASCADE, null=False, related_name="%(app_label)s_%(class)s_created_by")
+    modified_by   = models.ForeignKey(User, to_field="id" , on_delete=models.CASCADE, null=False, related_name="%(app_label)s_%(class)s_modified_by")
+    created_at    = models.DateTimeField(null=False, auto_now_add =True)
+    modified_at   = models.DateTimeField(null=False, auto_now     =True)
 
+    class Meta:
+            abstract = True
+    
 class Author(Logger):
     fullname        = models.CharField(max_length=128, null=False, unique=True)
     born_date       = models.DateTimeField(null=False,)
@@ -29,7 +32,7 @@ class Quote(Logger):
     # tags    = ArrayField(models.CharField(max_length=256, null=False, unique=True))
     tags = models.ManyToManyField(Tag)
 
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)#, related_name="author_id")
     def __str__(self):
             return f"{self.quote}"
 
