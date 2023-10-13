@@ -127,7 +127,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -143,3 +143,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 
 LOGIN_URL = '/users/signin'
+
+EMAIL_BACKEND       = "django.core.mail.backends.smtp.EmailBackend"
+# TODO: use pydantic
+EMAIL_HOST          = os.environ.get("EMAIL_HOST")
+EMAIL_PORT          = os.environ.get("EMAIL_PORT")
+EMAIL_STARTTLS      = os.environ.get("MAIL_STARTTLS")
+EMAIL_USE_SSL       = True
+EMAIL_USE_TLS       = os.environ.get("MAIL_SSL_TLS")
+EMAIL_HOST_USER     = os.environ.get("MAIL_USERNAME")
+EMAIL_HOST_PASSWORD = os.environ.get("MAIL_PASSWORD")
+DEFAULT_FROM_EMAIL  = os.environ.get("MAIL_USERNAME")
