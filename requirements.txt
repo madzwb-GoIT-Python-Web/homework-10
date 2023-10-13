@@ -32,8 +32,12 @@ cssselect==1.2.0
     #   scrapy
 django==4.2.5
     # via homework-10 (pyproject.toml)
+dnspython==2.4.2
+    # via pymongo
 filelock==3.12.4
     # via tldextract
+homework-8-1 @ git+https://github.com/madzwb-GoIT-Python-Web/homework-8.1.git
+    # via homework-10 (pyproject.toml)
 homework-9 @ git+https://github.com/madzwb-GoIT-Python-Web/homework-9.git
     # via homework-10 (pyproject.toml)
 hyperlink==21.0.0
@@ -59,6 +63,8 @@ lxml==4.9.3
     # via
     #   parsel
     #   scrapy
+mongoengine==0.27.0
+    # via homework-8-1
 packaging==23.2
     # via
     #   parsel
@@ -81,12 +87,18 @@ pycparser==2.21
     # via cffi
 pydispatcher==2.0.7
     # via scrapy
+pymongo==4.5.0
+    # via mongoengine
 pyopenssl==23.2.0
     # via scrapy
 python-dotenv==1.0.0
-    # via homework-10 (pyproject.toml)
+    # via
+    #   homework-10 (pyproject.toml)
+    #   homework-8-1
 queuelib==1.6.2
     # via scrapy
+registrator @ git+https://www.github.com/madzwb/registrator@0.3.0
+    # via homework-8-1
 requests==2.31.0
     # via
     #   requests-file

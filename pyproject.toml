@@ -23,7 +23,7 @@ dependencies = [
   "psycopg2==2.9.9",
   "python-dotenv==1.0.0",
   "homework-9@git+https://github.com/madzwb-GoIT-Python-Web/homework-9.git",
-  # "homework-8.1@git+https://github.com/madzwb-GoIT-Python-Web/homework-8.1.git",
+  "homework-8.1@git+https://github.com/madzwb-GoIT-Python-Web/homework-8.1.git",
 ]
 
 # [project.scripts]
