@@ -24,7 +24,6 @@ def about(request, author_id):
     return render(request, "quotes/description.html", context={"authors": description})
 
 def authors_by_tags(request, tag_name):
-
     tags = Tag.objects.filter(name=tag_name).first()
     quotes = tags.quote_set.all()
     return render(request, "quotes/tags.html", context={"quotes": quotes})
