@@ -11,7 +11,7 @@
                 {{ quote.quote }}
             </span>
             <span>by <small class="author" itemprop="author">{{ quote.author }}</small>
-                <a href="{% url 'quotes:description' quote_id=quote.id %}">(about)</a>
+                <a href="{% url 'quotes:description' author_id=quote.author_id %}">(about)</a>
             </span>
             <div class="tags">
                 Tags:
@@ -23,6 +23,12 @@
         {% endfor %}
         <nav>
             <ul class="pager">
+                <li class="first">
+                    <a class="{% if quotes.num_pages == 0 %} disabled {% endif %}"
+                            href="{% url 'quotes:root_paginate' 1 %}">
+                        <span aria-hidden="true">↑</span> First
+                    </a>
+                </li>
                 <li class="previous">
                     <a class="{% if not quotes.has_previous %} disabled {% endif %}"
                             href="{% if quotes.has_previous %} {% url 'quotes:root_paginate' quotes.previous_page_number %} {% else %} # {% endif %}">
@@ -33,27 +39,33 @@
                 <li class="next">
                     <a class="{% if not quotes.has_next %} disabled {% endif %}"
                             href="{% if quotes.has_next %} {% url 'quotes:root_paginate' quotes.next_page_number %} {% else %} # {% endif %}">
-                        Next <span aria-hidden="true">→</span></a>
+                        Next <span aria-hidden="true">→</span>
+                    </a>
                 </li>
-
+                <li class="last">
+                    <a class="{% if quotes.num_pages == 0 %} disabled {% endif %}"
+                            href="{% url 'quotes:root_paginate' quotes.paginator.num_pages %}">
+                        <span aria-hidden="true">↓</span> Last
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
 
     <div class="col-md-4">
-        <p>
-            {% if user.is_authenticated %}
-            <a href="{% url 'users:signout' %}" class="btn btn-primary">Signout</a>
-            {% else %}
-            <a href="{% url 'users:signup' %}" class="btn btn-primary">Signup</a>
-            <a href="{% url 'users:signin' %}" class="btn btn-primary">Signin</a>
-            {% endif %}
-        </p>
+        {% if user.is_authenticated %}
+            <div><a href="{% url 'users:signout' %}" class="btn btn-primary">Signout</a></div><br>
+            <div><a href="{% url 'quotes:add_author' %}"class="btn btn-primary">Add author</a></div><br>
+            <div><a href="{% url 'quotes:add_quote' %}"class="btn btn-primary">Add quote</a></div><br>
+            <div><a href="{% url 'quotes:add_tag' %}"class="btn btn-primary">Add tag</a></div><br>
+        {% else %}
+            <div><a href="{% url 'users:signup' %}" class="btn btn-primary">Signup</a></div><br>
+            <div><a href="{% url 'users:signin' %}" class="btn btn-primary">Signin</a></div><br>
+        {% endif %}
     </div>
 
 </div>
-
 {% endblock %}
-            <!-- <a href="{% url 'quotes:add_author' %}"class="btn btn-primary">Add author</a>
-            <a href="{% url 'quotes:add_quote' %}"class="btn btn-primary">Add quote</a>
-            <a href="{% url 'quotes:add_tag' %}"class="btn btn-primary">Add tag</a> -->
+<p>
+</p>
+<a href="{% url 'quotes:add_tag' %}"class="btn btn-primary">Add tag</a>
