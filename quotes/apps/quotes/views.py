@@ -1,13 +1,16 @@
-from django.shortcuts import render, redirect
-from django.core.paginator import Paginator
-from django.views import View
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.db.models import Count
+from django.shortcuts import render, redirect
+from django.views import View
 
 from .forms import AuthorForm, QuoteForm, TagForm
 from .models import Author, Tag, Quote
 
 # Create your views here.
 def main(request, page=1):
+    tags = Tag.objects.annotate(num_quotes=Count("quote")).order_by("-num_quotes").all()[:10]
+
     quotes = (
         Quote.objects.select_related("author")
         .prefetch_related("tags")
@@ -17,7 +20,7 @@ def main(request, page=1):
     per_page = 10
     paginator = Paginator(quotes, per_page)
     quotes_on_page = paginator.page(page)
-    return render(request, "quotes/index.html", context={"quotes": quotes_on_page})
+    return render(request, "quotes/index.html", context={"quotes": quotes_on_page, "tags": tags})
 
 def about(request, author_id):
     description = Author.objects.filter(pk=author_id)
