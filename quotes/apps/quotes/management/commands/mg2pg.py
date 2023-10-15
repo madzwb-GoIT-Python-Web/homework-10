@@ -10,113 +10,72 @@ from django.core.exceptions import ObjectDoesNotExist
 from homework_8_1 import connection
 from homework_8_1 import models as mongodb
 
-from ... import models as postgres#import Author, Tag, Quote
-
-
-
-class Logger(BaseModel):
-    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
-
-    created_by      : postgres.User|None = None
-    modified_by     : postgres.User|None = None
-
-
-
-class Author(Logger):
-    fullname        : str
-    born_date       : date
-    born_location   : str
-    description     : str
-
-
-
-class Quote(Logger):
-    author      : postgres.Author|mongodb.Author|None = None
-    quote       : str
-    # tags        : list[str]
-
-
-
-class Tag(Logger):
-    name        : str
+from ... import models as postgres
+from ..migration import Logger, Author, Quote, Tag, update_or_create
 
 
 
 def migrate():
-    authors_created = 0
-    authors_updated = 0
-    quotes_created  = 0
-    quotes_updated  = 0
-    quotes_skipped  = 0
-    tags_created    = 0
-    tags_updated    = 0
+    result =    {
+                    "authors" : {
+                        "created": 0,
+                        "updated": 0,
+                    },
+                    "quotes" : {
+                        "created": 0,
+                        "updated": 0,
+                        "skipped": 0,
+                    },
+                    "tags" : {
+                        "created": 0,
+                        "updated": 0,
+                    },
+                }
 
     admin  = postgres.User.objects.get(pk=1)
-    for mg_quote in mongodb.Quote.objects.all():#mongodb.Quote.objects().all():
+    # py_logger = Logger(modified_by=admin)
+    # py_logger.created_by   = admin
+    # py_logger.modified_by  = admin
+    for mg_quote in mongodb.Quote.objects.all():
         mg_author = mg_quote.author
         if mg_author is None:
-            quotes_skipped += 1
+            result["quotes"]["skipped"] += 1
             continue
-        py_logger = Logger()
-        py_logger.created_by   = admin
-        py_logger.modified_by  = admin
+        mg_author["modified_by"] = admin
 
-        py_author = Author.model_validate(mg_author)
-        author = py_author.model_dump()
-        author.update(py_logger)
-        pg_author, created  =   postgres.Author.objects.update_or_create(
-                                    fullname=py_author.fullname,
-                                    defaults=author,
-                                )
+        pg_author, created = update_or_create(mg_author, Author, postgres.Author)
         if created:
-            authors_created += 1
+            result["authors"]["created"] += 1
         else:
-            authors_updated += 1
-        # try:
-        #     pg_author = postgres.Author.objects.get(fullname=mg_author.fullname)
-        # except ObjectDoesNotExist:
-        #     pg_author = postgres.Author.objects.create(**author)
-        py_quote = Quote.model_validate(mg_quote)
-        py_quote.author = pg_author
-        quote = py_quote.model_dump()
-        quote.update(py_logger)
-        pg_quote, created   =   postgres.Quote.objects.update_or_create(
-                                    quote       = py_quote.quote,
-                                    defaults    = quote,
-                                )
+            result["authors"]["updated"] += 1
+
+        mg_quote["modified_by"] = admin
+
+        pg_quote, created = update_or_create(mg_quote, Quote, postgres.Quote)
         if created:
-            quotes_created += 1
+            result["quotes"]["created"] += 1
         else:
-            quotes_updated += 1
+            result["quotes"]["updated"] += 1
+
+        # Fill tags.
+        tags = []
         for mg_tag in mg_quote.tags:
-            py_tag = Tag.model_validate(mg_tag)
-            tag = py_tag.model_dump()
-            tag.update(py_logger)
-            pg_tag, created =   postgres.Tag.objects.update_or_create(
-                                    name        = py_tag.name,
-                                    defaults    = tag,
-                                )
-            if created:
-                tags_created += 1
-            else:
-                tags_updated += 1
-            pg_quote.tags.add(pg_tag)
+            mg_tag["modified_by"] = admin
 
-    return  {
-                "authors" : {
-                    "created": authors_created,
-                    "updated": authors_updated,
-                },
-                "quotes" : {
-                    "created": quotes_created,
-                    "updated": quotes_updated,
-                    "skipped": quotes_skipped,
-                },
-                "tags" : {
-                    "created": tags_created,
-                    "updated": tags_updated,
-                },
-            }
+            pg_tag, created = update_or_create(mg_tag, Tag, postgres.Tag)
+            if created:
+                result["tags"]["created"] += 1
+            else:
+                result["tags"]["updated"] += 1
+
+            tags.append(pg_tag)
+            if not pg_quote.tags.contains(pg_tag):
+                pg_quote.tags.add(pg_tag)
+        # Remove old tags
+        for tag in pg_quote.tags.all():
+            if not tag in tags:
+                pg_quote.tags.remove(tag)
+    return result
 
 class Command(BaseCommand):
 

@@ -1,11 +1,31 @@
+from typing import Any
 from django.db import models
 # from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
+from django.db.models import Model
 
 # Create your models here.
+
+class UserField(models.ForeignKey):
+
+    # def clean(self, value: Any, model_instance: Model | None) -> Any:
+    #      return super().clean(value, model_instance)
+    
+    def pre_save(self, model_instance, add):
+        if add:
+            value = getattr(model_instance, self.attname)
+            if value is None:
+                 value = 1 # User with pk=1 is "admin"
+            return value
+        else:
+            value = getattr(model_instance, self.attname)
+            if value is None:
+                 model_instance.refresh_from_db(fields=[self.attname]) # Restore old value
+            return super().pre_save(model_instance, add)
+        
 class Logger(models.Model):
-    created_by    = models.ForeignKey(User, to_field="id" , on_delete=models.CASCADE, null=False, related_name="%(app_label)s_%(class)s_created_by",)# default=User.objects.get(pk=1))
-    modified_by   = models.ForeignKey(User, to_field="id" , on_delete=models.CASCADE, null=False, related_name="%(app_label)s_%(class)s_modified_by",)# default=User.objects.get(pk=1))
+    created_by    = UserField(User, to_field="id" , on_delete=models.CASCADE, null=False, related_name="%(app_label)s_%(class)s_created_by",)# default=User.objects.get(pk=1))
+    modified_by   = UserField(User, to_field="id" , on_delete=models.CASCADE, null=False, related_name="%(app_label)s_%(class)s_modified_by",)# default=User.objects.get(pk=1))
     created_at    = models.DateTimeField(null=False, auto_now_add =True)
     modified_at   = models.DateTimeField(null=False, auto_now     =True)
 
