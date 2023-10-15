@@ -49,5 +49,6 @@ MAIL_SSL_TLS    = True
 USE_CREDENTIALS = True
 VALIDATE_CERTS  = True
 
+# end of .env file.
 
 pip install toml && python -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["project"]["dependencies"]))' | pip download -r /dev/stdin  --dest=dest 
