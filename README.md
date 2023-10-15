@@ -13,6 +13,7 @@ Scenarios:
 PS:
     not all cli options are working(-d --data). Its is in TODO list.
 
+.env file example:
 
 DJANGO_SECRET_KEY   = 
 # DJANGO_SECRET_KEY_FILE  = secrets/django.key
