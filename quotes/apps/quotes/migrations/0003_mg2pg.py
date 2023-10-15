@@ -5,6 +5,7 @@ from ..management.commands import mg2pg
 
 def migrate_data(apps, schema_editor):
     result = mg2pg.migrate()
+    print(result)
     return
 
 class Migration(migrations.Migration):
