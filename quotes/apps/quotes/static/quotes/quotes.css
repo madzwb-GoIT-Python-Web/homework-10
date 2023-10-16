@@ -1,4 +1,4 @@
-/* .quote {
+.quote {
     padding: 10px;
     margin-bottom: 30px;
     border: 1px solid #333333;
@@ -16,8 +16,8 @@
 .quote small.author {
     font-weight: bold;
     color: #3677E8;
-} */
-/* 
+}
+
 .quote .tags {
     margin-top: 10px;
 }
@@ -28,8 +28,8 @@
     color: white;
     font-size: small;
     background-color: #7CA3E6;
-} */
-/* 
+}
+
 .pager {
     font-family: "Raleway","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
@@ -70,9 +70,9 @@
 .disabled {
     color: #333333;
     cursor: not-allowed;
-} */
-
-/* .tag-item {
+}
+/* 
+.tag-item {
     display: block;
     margin: 4px;
     text-align: right;

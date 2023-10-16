@@ -146,11 +146,13 @@ LOGIN_URL = '/users/signin'
 
 EMAIL_BACKEND       = "django.core.mail.backends.smtp.EmailBackend"
 # TODO: use pydantic
-EMAIL_HOST          = os.environ.get("EMAIL_HOST")
-EMAIL_PORT          = os.environ.get("EMAIL_PORT")
-EMAIL_STARTTLS      = os.environ.get("MAIL_STARTTLS")
-EMAIL_USE_SSL       = True
-EMAIL_USE_TLS       = os.environ.get("MAIL_SSL_TLS")
+EMAIL_HOST          = os.environ.get("MAIL_SERVER")
+EMAIL_PORT          = os.environ.get("MAIL_PORT")
+EMAIL_STARTTLS      = os.environ.get("MAIL_STARTTLS")   .upper() == "TRUE"
+EMAIL_USE_SSL       = os.environ.get("MAIL_SSL_TLS")    .upper() == "TRUE"
+EMAIL_USE_TLS       = not EMAIL_USE_SSL
 EMAIL_HOST_USER     = os.environ.get("MAIL_USERNAME")
 EMAIL_HOST_PASSWORD = os.environ.get("MAIL_PASSWORD")
-DEFAULT_FROM_EMAIL  = os.environ.get("MAIL_USERNAME")
+DEFAULT_FROM_EMAIL  = os.environ.get("MAIL_FROM")
+# SERVER_EMAIL        = os.environ.get("MAIL_FROM")
+pass

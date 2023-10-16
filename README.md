@@ -11,7 +11,7 @@ Scenarios:
         python manage.py json2mg
         python manage.py mg2pg
 PS:
-    not all cli options are working(-d --data). Its is in TODO list.
+    not all cli options are working(-d --data). Its are in TODO list.
 
 .env file example:
 
