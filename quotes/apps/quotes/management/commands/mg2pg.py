@@ -41,17 +41,17 @@ def migrate():
         if mg_author is None:
             result["quotes"]["skipped"] += 1
             continue
-        mg_author["modified_by"] = admin
 
-        pg_author, created = update_or_create(mg_author, Author, postgres.Author)
+        pg_author, created = update_or_create(admin, mg_author, Author, postgres.Author)
         if created:
             result["authors"]["created"] += 1
         else:
             result["authors"]["updated"] += 1
 
-        mg_quote["modified_by"] = admin
-
-        pg_quote, created = update_or_create(mg_quote, Quote, postgres.Quote)
+        # mg_quote["modified_by"] = admin
+        # mg_quote.extend("modified_by", admin)
+        mg_quote.author = pg_author
+        pg_quote, created = update_or_create(admin, mg_quote, Quote, postgres.Quote)
         if created:
             result["quotes"]["created"] += 1
         else:
@@ -60,9 +60,9 @@ def migrate():
         # Fill tags.
         tags = []
         for mg_tag in mg_quote.tags:
-            mg_tag["modified_by"] = admin
+            # mg_tag.extend("modified_by", admin)
 
-            pg_tag, created = update_or_create(mg_tag, Tag, postgres.Tag)
+            pg_tag, created = update_or_create(admin, mg_tag, Tag, postgres.Tag)
             if created:
                 result["tags"]["created"] += 1
             else:

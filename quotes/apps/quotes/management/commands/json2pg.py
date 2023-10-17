@@ -31,7 +31,7 @@ def seed(path):
                 }
 
     admin  = User.objects.get(pk=1)
-    py_logger = Logger(modified_by=admin)
+    # py_logger = Logger(modified_by=admin)
     # py_logger.created_by   = admin
     # py_logger.modified_by  = admin
 
@@ -47,7 +47,7 @@ def seed(path):
             author[key] = value
         author["modified_by"] = admin
 
-        pg_author, created = update_or_create(author, Author, postgres.Author)
+        pg_author, created = update_or_create(admin, author, Author, postgres.Author)
         if created:
             result["authors"]["created"] += 1
         else:
@@ -72,7 +72,7 @@ def seed(path):
         quote["modified_by"] = admin
         quote["author"] = pg_author
 
-        pg_quote, created = update_or_create(quote, Quote, postgres.Quote)
+        pg_quote, created = update_or_create(admin, quote, Quote, postgres.Quote)
         if created:
             result["quotes"]["created"] += 1
         else:
@@ -85,7 +85,7 @@ def seed(path):
             tag["name"] = tag_name
             tag["modified_by"] = admin
             
-            pg_tag, created = update_or_create(tag, Tag, postgres.Tag)
+            pg_tag, created = update_or_create(admin, tag, Tag, postgres.Tag)
             if created:
                 result["tags"]["created"] += 1
             else:
@@ -105,7 +105,7 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any) -> str | None:
         # super().handle(*args, **options)
         app = __package__.split(".management.commands")[0].split('.')[-1]
-        result = seed(options["data"] / "data")
+        result = seed(Path(options["data"]))
         print(result)
         return
 
@@ -114,6 +114,6 @@ class Command(BaseCommand):
             '-d', 
             '--data',
             action='store', 
-            default=Path.cwd(),
+            default=Path.cwd() / "data",
             help='Path to store JSON-data.'
         )

@@ -8,7 +8,7 @@ class Logger(BaseModel):
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
     created_by      : postgres.User|None = None
-    modified_by     : postgres.User#|None = None
+    modified_by     : postgres.User|None = None
 
 
 
@@ -32,12 +32,13 @@ class Tag(Logger):
 
 
 
-def update_or_create(data, PYModel, PGModel):
+def update_or_create(user, data, PYModel, PGModel):
 
     py_model = PYModel.model_validate(data)
+    py_model.modified_by = user
 
     uniques = [f for f in PGModel._meta.fields if f.unique]
-    params = {u.name: data[u.name] for u in uniques if u.name in data}
+    params = {u.name: getattr(py_model, u.name) for u in uniques if hasattr(py_model, u.name)}
 
     try:
         created = False

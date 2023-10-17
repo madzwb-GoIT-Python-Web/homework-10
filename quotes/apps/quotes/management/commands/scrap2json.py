@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any) -> str | None:
         # super().handle(*args, **options)
         app = __package__.split(".management.commands")[0].split('.')[-1]
-        data_path = options["data"] / "data"
+        data_path = Path(options["data"])
         if data_path.exists():
             shutil.rmtree(data_path)
         _spiders = [spiders.AuthorsSpider, spiders.QuotesSpider]
@@ -23,6 +23,6 @@ class Command(BaseCommand):
             '-d', 
             '--data',
             action='store', 
-            default=Path.cwd(),
+            default=Path.cwd() / "data",
             help='Path to store JSON-data.'
         )

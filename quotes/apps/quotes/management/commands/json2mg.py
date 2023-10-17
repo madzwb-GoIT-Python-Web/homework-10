@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any) -> str | None:
         # super().handle(*args, **options)
         app = __package__.split(".management.commands")[0].split('.')[-1]
-        seed.seed(options["data"] / "data")
+        seed.seed(Path(options["data"]))
         return
 
     def add_arguments(self, parser):
@@ -21,6 +21,6 @@ class Command(BaseCommand):
             '-d', 
             '--data',
             action='store', 
-            default=Path.cwd(),
+            default=Path.cwd() / "data",
             help='Path to store JSON-data.'
         )
