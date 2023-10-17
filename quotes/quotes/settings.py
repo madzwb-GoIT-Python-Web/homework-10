@@ -24,7 +24,16 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+secret_file = os.environ.get("DJANGO_SECRET_KEY_FILE")
+if secret_file and not os.path.exists(secret_file):
+    secret_file = os.path.join(os.getcwd(), secret_file)
+if secret_file:
+    with open(secret_file, 'r') as fd:
+        SECRET_KEY = ''.join([line.strip() for line in fd.readlines()])
+else:
+    SECRET_KEY  = os.environ.get("DJANGO_SECRET_KEY")
+
+# SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -80,14 +89,24 @@ WSGI_APPLICATION = 'quotes.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+secret_file = os.environ.get("POSTGRES_PASSWORD_FILE")
+if secret_file and not os.path.exists(secret_file):
+    secret_file = os.path.join(os.getcwd(), secret_file)
+if secret_file:
+    with open(secret_file, 'r') as fd:
+        POSTGRES_PASSWORD = ''.join([line.strip() for line in fd.readlines()])
+else:
+    POSTGRES_PASSWORD  = os.environ.get("POSTGRES_PASSWORD")
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME'      : os.environ.get("POSTGRES_NAME"),#'quotes',
-        'USER'      : os.environ.get("POSTGRES_USER"),#'postgres',
-        'PASSWORD'  : os.environ.get("POSTGRES_PASSWORD"),#'postgres',
-        'HOST'      : os.environ.get("POSTGRES_HOST"),#'127.0.0.1',
-        'PORT'      : os.environ.get("POSTGRES_PORT"),#'5432',
+        'NAME'      : os.environ.get("POSTGRES_NAME"),
+        'USER'      : os.environ.get("POSTGRES_USER"),
+        'PASSWORD'  : POSTGRES_PASSWORD,
+        'HOST'      : os.environ.get("POSTGRES_HOST"),
+        'PORT'      : os.environ.get("POSTGRES_PORT"),
     }
 }
 

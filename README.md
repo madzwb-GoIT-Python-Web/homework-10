@@ -13,6 +13,8 @@ Scenarios:
 PS:
     not all cli options are working(-d --data). Its are in TODO list.
 
+secrets files NOT tested!!!
+
 .env file example:
 
 DJANGO_SECRET_KEY   = 
